@@ -168,7 +168,7 @@ void iLQGPlanner::NominalTrajectory(int horizon, ThreadPool& pool) {
   if (num_trajectory_ == 0) {
     return;
   }
-  // set policy trajectory horizon
+  // set UpdateNominalPolicy trajectory horizon
   policy.trajectory.horizon = horizon;
 
   // resize data for rollouts

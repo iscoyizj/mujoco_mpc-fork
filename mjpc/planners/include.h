@@ -31,6 +31,7 @@ enum PlannerType : int {
   kRobustPlanner,
   kCrossEntropyPlanner,
   kSampleGradientPlanner,
+  kFeedbackSamplingPlanner,
 };
 
 // Planner names, separated by '\n'.

@@ -93,6 +93,8 @@ add_library(
   planners/model_derivatives.h
   planners/cross_entropy/planner.cc
   planners/cross_entropy/planner.h
+  planners/feedback_sampling/planner.cc
+  planners/feedback_sampling/planner.h
   planners/robust/robust_planner.cc
   planners/robust/robust_planner.h
   planners/sample_gradient/planner.cc
