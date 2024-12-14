@@ -76,7 +76,25 @@ void Stand::ResidualFn::Residual(const mjModel* model, const mjData* data,
   // ----- Posture ----- //
   double* home = KeyQPosByName(model, data, "stand");
   mju_sub(residual + counter, data->qpos + 7, home + 7, model->nu);
+  // set index at 0, 3, 4, 6, 9, 10 to 0
+  residual[counter + 0] = 0;
+  residual[counter + 3] = 0;
+  residual[counter + 4] = 0;
+  residual[counter + 6] = 0;
+  residual[counter + 9] = 0;
+  residual[counter + 10] = 0;
   counter += model->nu;
+
+  // ----- Upright ----- //
+  int torso_body_id_ = mj_name2id(model, mjOBJ_XBODY, "torso");
+  int left_foot_body_id_ = mj_name2id(model, mjOBJ_XBODY, "left_ankle_roll_link");
+  int right_foot_body_id_ = mj_name2id(model, mjOBJ_XBODY, "right_ankle_roll_link");
+  double* torso_xmat = data->xmat + 9*torso_body_id_;
+  double* left_foot_xmat = data->xmat + 9*left_foot_body_id_;
+  double* right_foot_xmat = data->xmat + 9*right_foot_body_id_;
+  residual[counter++] = torso_xmat[8] - 1;
+  residual[counter++] = left_foot_xmat[8] - 1;
+  residual[counter++] = right_foot_xmat[8] - 1;
 
   // sensor dim sanity check
   // TODO: use this pattern everywhere and make this a utility function
