@@ -38,13 +38,12 @@ class G1Sim:
         # Initialize state variables
         self.q = self.mj_model.key_qpos[0].copy()
         self.qd = self.mj_model.key_qvel[0].copy()
-        self.nu_msg = self.mj_model.nu  # Number of motors in the interface
         self.nq = self.mj_model.nq
         self.nqd = self.mj_model.nv
         self.nu = self.mj_model.nu
 
         # Shared Memory for control inputs
-        self.ctrl_shm_size = 8 + self.nu_msg * 8  # time + q_des
+        self.ctrl_shm_size = 8 + self.nu * 8  # time + q_des
         self.ctrl_shm = shared_memory.SharedMemory(
             name="ctrl_shm", create=True, size=self.ctrl_shm_size
         )
@@ -70,7 +69,7 @@ class G1Sim:
                     ctrl_data = self.ctrl_buffer[:]
                     self.ctrl_time = struct.unpack("d", ctrl_data[0:8])[0]
                     self.q_des = np.frombuffer(
-                        ctrl_data[8 : 8 + self.nu_msg * 8], dtype=np.float64
+                        ctrl_data[8 : 8 + self.nu * 8], dtype=np.float64
                     )
                     self.mj_data.ctrl[:] = self.q_des
 
