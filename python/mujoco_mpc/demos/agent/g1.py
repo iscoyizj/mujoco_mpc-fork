@@ -18,8 +18,8 @@ import mediapy as media
 import mujoco
 # set current directory: mujoco_mpc/python/mujoco_mpc
 from mujoco_mpc import agent as agent_lib
+from mujoco_mpc import mjpc_parameters
 import numpy as np
-
 import pathlib
 
 # %matplotlib inline
@@ -28,15 +28,23 @@ import pathlib
 # model
 model_path = (
     pathlib.Path(__file__).parent.parent.parent
-    / "../../build/mjpc/tasks/g1/stand/task.xml"
+    # / "../../build/mjpc/tasks/g1/stand/task.xml"
+    / "../../mjpc/tasks/g1/stand/task.xml"
 )
 model = mujoco.MjModel.from_xml_path(str(model_path))
+model.opt.timestep = 0.02
 
 # data
 data = mujoco.MjData(model)
 
 # renderer
 renderer = mujoco.Renderer(model)
+
+# render one frame
+mujoco.mj_forward(model, data)
+renderer.update_scene(data, camera="frontview")
+pixels = renderer.render()
+media.show_image(pixels)
 
 # %%
 # agent
@@ -50,9 +58,10 @@ agent = agent_lib.Agent(task_id="G1 Stand", model=model)
 # agent.set_task_parameter("Goal", -1.0)
 # print("Parameters:", agent.get_task_parameters())
 
+
 # %%
 # rollout horizon
-T = 1500
+T = 100
 
 # trajectories
 qpos = np.zeros((model.nq, T))
@@ -115,7 +124,7 @@ for t in range(T - 1):
   time[t + 1] = data.time
 
   # render and save frames
-  renderer.update_scene(data)
+  renderer.update_scene(data, camera="frontview")
   pixels = renderer.render()
   frames.append(pixels)
 

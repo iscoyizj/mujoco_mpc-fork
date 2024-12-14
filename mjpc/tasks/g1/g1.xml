@@ -82,6 +82,7 @@
     </asset>
 
     <worldbody>
+        <camera name="frontview" pos="2.0 0 0.7" euler="1.57 1.57 0" />
         <geom name="floor" type="plane" conaffinity="1" size="50 50 .05" material="blue_grid"/>
         <body name="pelvis" pos="0 0 0.793">
             <site name="tracking[pelvis]" class="tracking_site" pos="0 0 0.075" size=".05" />

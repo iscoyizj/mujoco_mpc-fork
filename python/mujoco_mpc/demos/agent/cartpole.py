@@ -50,6 +50,7 @@ print("Cost weights:", agent.get_cost_weights())
 agent.set_task_parameter("Goal", -1.0)
 print("Parameters:", agent.get_task_parameters())
 
+
 # %%
 # rollout horizon
 T = 1500
