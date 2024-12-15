@@ -5,14 +5,27 @@ from scipy.signal import butter, lfilter
 from multiprocessing import shared_memory
 from pyvicon_datastream import tools
 import struct
+from loop_rate_limiters import RateLimiter
 
 from utils import pack_mocap_data
-
+from config import G1Config
 class ViconDemo:
-    def __init__(self):
+    """
+    Vicon data acquisition and filtering
+
+    Note:
+    - The quaternion is in the order of [x, y, z, w]. So need to convert it to the order of [w, x, y, z] before packing.
+    - Vicon's euler is absolute, which we should use "XYZ" in scipy.spatial.transform.Rotation, instead of "xyz", which is relative.
+    """
+    def __init__(self, robot_name="g1"):
+        if robot_name == "g1":
+            self.config = G1Config()
+        else:
+            raise ValueError(f"Robot {robot_name} not supported")
+
         # Vicon DataStream IP and object name
-        self.vicon_tracker_ip = "128.2.184.3"  # Replace with your Vicon DataStream IP
-        self.vicon_object_name = "lecar_g1"  # Replace with your object name
+        self.vicon_tracker_ip = self.config.vicon_tracker_ip
+        self.vicon_object_name = self.config.vicon_object_name
 
         # Connect to Vicon DataStream
         self.tracker = tools.ObjectTracker(self.vicon_tracker_ip)
@@ -30,7 +43,7 @@ class ViconDemo:
         # Low-pass filter parameters
         self.cutoff_freq = 5.0  # Cut-off frequency of the filter (Hz)
         self.filter_order = 2
-        self.fs = 100.0  # Sampling frequency (Hz)
+        self.fs = 1 / self.config.dt_real  # Sampling frequency (Hz)
         self.b, self.a = butter(
             self.filter_order, self.cutoff_freq / (0.5 * self.fs), btype="low"
         )
@@ -63,7 +76,7 @@ class ViconDemo:
 
             # Position and orientation
             position = np.array([x, y, z]) / 1000.0
-            rotation = R.from_euler("xyz", [roll, pitch, yaw], degrees=False)
+            rotation = R.from_euler("XYZ", [roll, pitch, yaw], degrees=False)
             quaternion = rotation.as_quat()  # [x, y, z, w]
 
             return current_time, position, quaternion
@@ -121,12 +134,13 @@ class ViconDemo:
 
     def main_loop(self):
         print("Starting Vicon data acquisition...")
+        rate_limiter = RateLimiter(frequency=1 / self.config.dt_real)
         try:
             while True:
                 # Get Vicon data
                 current_time, position, quaternion = self.get_vicon_data()
                 if position is None:
-                    time.sleep(0.01)
+                    rate_limiter.sleep()
                     continue
 
                 # Compute velocities
@@ -143,10 +157,11 @@ class ViconDemo:
                 )
 
                 # Prepare data to pack
-                self.state_buffer[:] = pack_mocap_data(self.state_buffer, current_time, position, quaternion, filtered_linear_velocity, filtered_angular_velocity)
+                x, y, z, w = quaternion
+                self.state_buffer[:] = pack_mocap_data(self.state_buffer, current_time, position, np.array([w, x, y, z]), filtered_linear_velocity, filtered_angular_velocity)
 
                 # Sleep to mimic sampling rate
-                time.sleep(1.0 / self.fs)
+                rate_limiter.sleep()
 
         except KeyboardInterrupt:
             print("Exiting Vicon data acquisition.")

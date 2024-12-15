@@ -85,6 +85,8 @@ class G1Config:
     # mocap
     mocap_offset: np.ndarray = np.array([0.0, 0.0, 0.065])
     use_mocap_ang_vel: bool = False
+    vicon_tracker_ip: str = "128.2.184.3"
+    vicon_object_name: str = "lecar_g1"
 
     # controller
     xml_path_ctrl: str = (
