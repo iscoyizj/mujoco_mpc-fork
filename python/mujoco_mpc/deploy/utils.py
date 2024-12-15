@@ -52,13 +52,15 @@ def unpack_state_data(buffer, nq_real, nqd_real):
 def ctrl_sim2real(ctrl_sim, locked_joint_idx, nu_real):
     ctrl_real = np.zeros(nu_real)
     locked_mask = np.zeros(nu_real, dtype=bool)
-    locked_mask[locked_joint_idx] = True
+    if len(locked_joint_idx) > 0:
+        locked_mask[locked_joint_idx] = True
     ctrl_real[~locked_mask] = ctrl_sim
     return ctrl_real
 
 def state_real2sim(q_real, qd_real, locked_joint_idx, nq_ctrl, nqd_ctrl, nq_real, nqd_real):
     locked_mask = np.zeros(nq_real-7, dtype=bool)
-    locked_mask[locked_joint_idx] = True
+    if len(locked_joint_idx) > 0:
+        locked_mask[locked_joint_idx] = True
     q_sim, qd_sim = np.zeros(nq_ctrl), np.zeros(nqd_ctrl)
     q_sim[:7] = q_real[:7]
     q_sim[7:nq_ctrl] = q_real[7:nq_real][~locked_mask]

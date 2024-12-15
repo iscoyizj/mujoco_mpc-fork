@@ -31,7 +31,6 @@ from unitree_sdk2py.utils.crc import CRC
 from config import G1Config
 from utils import unpack_control_data, pack_state_data, unpack_mocap_data
 
-
 class Real:
     def __init__(self, robot_name="g1"):
         if robot_name == "g1":
@@ -144,7 +143,7 @@ class Real:
                     for idx in range(self.config.nu_real):
                         self.low_cmd_msg.motor_cmd[
                             idx
-                        ].mode = 0x01  # Set appropriate mode
+                      ].mode = 0x01  # Set appropriate mode
                         self.low_cmd_msg.motor_cmd[idx].q = ctrl[idx]
                         self.low_cmd_msg.motor_cmd[idx].dq = 0.0
                         self.low_cmd_msg.motor_cmd[idx].tau = 0.0
@@ -181,5 +180,5 @@ class Real:
 
 
 if __name__ == "__main__":
-    viz = Real()
+    viz = Real(robot_name="g1")
     viz.main_loop()

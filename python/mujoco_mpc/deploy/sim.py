@@ -13,16 +13,18 @@ from multiprocessing import shared_memory
 import struct
 from loop_rate_limiters import RateLimiter
 
-from config import G1Config
+from config import G1Config, Go2Config
 from utils import pack_state_data, unpack_control_data
 
 plt.style.use(["science"])
 
 
-class G1Sim:
+class Sim:
     def __init__(self, robot_name="g1"):
         if robot_name == "g1":
             self.config = G1Config()
+        elif robot_name == "go2":
+            self.config = Go2Config()
         else:
             raise ValueError(f"Robot {robot_name} not supported")
 
@@ -30,7 +32,9 @@ class G1Sim:
         self.mj_model = mujoco.MjModel.from_xml_path(self.config.xml_path_sim)
         self.mj_model.opt.timestep = self.config.dt_sim
         self.mj_data = mujoco.MjData(self.mj_model)
+        mujoco.mj_resetDataKeyframe(self.mj_model, self.mj_data, 0)
         self.n_sim_frame = int(self.config.dt_ctrl / self.config.dt_sim)
+        self.default_ctrl = self.mj_data.ctrl
         assert np.isclose(self.config.dt_ctrl, self.n_sim_frame * self.config.dt_sim), "Control timestep must be an integer multiple of simulation timestep"
 
         # Initialize state variables
@@ -61,6 +65,9 @@ class G1Sim:
                 while True:
                     # Read control inputs from shared memory
                     _, q_des = unpack_control_data(self.ctrl_buffer, self.config.nu_real)
+                    # check if q_des is close to zero
+                    if np.allclose(q_des, np.zeros_like(q_des)):
+                        q_des = self.default_ctrl
                     self.mj_data.ctrl[:] = q_des
 
                     mujoco.mj_step(self.mj_model, self.mj_data)
@@ -91,5 +98,5 @@ class G1Sim:
 
 
 if __name__ == "__main__":
-    sim = G1Sim()
+    sim = Sim(robot_name="go2")
     sim.main_loop()

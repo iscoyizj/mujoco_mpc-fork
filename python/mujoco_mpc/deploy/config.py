@@ -97,7 +97,48 @@ class G1Config:
 
     # sim
     xml_path_sim: str = (
-        "./model/g1.xml"
+        "./model/g1/g1.xml"
+    )
+    dt_sim: float = 0.005
+    real_time_factor: float = 1.0
+    auto_reset: bool = True
+
+class Go2Config:
+    # model used in controller
+    nq_ctrl: int = 19
+    nqd_ctrl: int = 18
+    nu_ctrl: int = 12
+    dt_ctrl: float = 0.02
+
+    # model used in real robot
+    nq_real: int = 19
+    nqd_real: int = 18
+    nu_real: int = 12
+    dt_real: float = 0.005
+    locked_joint_idx: np.ndarray = np.zeros(0)
+    kp_real: np.ndarray = np.array(
+        [30.0] * 12
+    )
+    kd_real: np.ndarray = np.array(
+        [0.65] * 12
+    )
+
+    # mocap
+    mocap_offset: np.ndarray = np.array([0.0, 0.0, 0.065])
+    use_mocap_ang_vel: bool = False
+    vicon_tracker_ip: str = "128.2.184.3"
+    vicon_object_name: str = "lecar_g1"
+
+    # controller
+    xml_path_ctrl: str = (
+        "/home/pcy/Research/code/mujoco_mpc-fork/mjpc/tasks/go2/task_flat.xml"
+    )
+    num_opt_steps: int = 1
+    task_id: str = "Go2 Flat"
+
+    # sim
+    xml_path_sim: str = (
+        "./model/go2/go2.xml"
     )
     dt_sim: float = 0.005
     real_time_factor: float = 1.0

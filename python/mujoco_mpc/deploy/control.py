@@ -6,13 +6,15 @@ from loop_rate_limiters import RateLimiter
 import mujoco
 from mujoco_mpc import agent as agent_lib
 
-from config import G1Config
+from config import G1Config, Go2Config
 from utils import pack_control_data, unpack_mocap_data, unpack_state_data, ctrl_sim2real, state_real2sim
 
 class Controller:
     def __init__(self, robot_name="g1"):
         if robot_name == "g1":
             self.config = G1Config()
+        elif robot_name == "go2":
+            self.config = Go2Config()
         else:
             raise ValueError(f"Robot {robot_name} not supported")
 
@@ -64,10 +66,7 @@ class Controller:
             self.ctrl_shm.close()
 
 
-def main():
-    controller = Controller()
+if __name__ == "__main__":
+    controller = Controller(robot_name="go2")
     controller.main_loop()
 
-
-if __name__ == "__main__":
-    main()
