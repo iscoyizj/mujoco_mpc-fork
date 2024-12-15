@@ -1,0 +1,101 @@
+import numpy as np
+
+class G1Config:
+    # model used in controller
+    nq_ctrl: int = 28
+    nqd_ctrl: int = 27
+    nu_ctrl: int = 21
+    dt_ctrl: float = 0.02
+
+    # model used in real robot
+    nq_real: int = 36
+    nqd_real: int = 35
+    nu_real: int = 29
+    dt_real: float = 0.005
+    locked_joint_idx: np.ndarray = (
+        np.array([2, 4, 5, 6, 9, 11, 12, 13]) + 12 + 3
+    )  # locked joints in real robot
+    kp_real: np.ndarray = np.array(
+        [
+            100,
+            100,
+            100,
+            200,
+            20,
+            20,
+            100,
+            100,
+            100,
+            200,
+            20,
+            20,
+            400,
+            400,
+            400,
+            90,
+            60,
+            20,
+            60,
+            4,
+            4,
+            4,
+            90,
+            60,
+            20,
+            60,
+            4,
+            4,
+            4,
+        ]
+    )
+    kd_real: np.ndarray = np.array(
+        [
+            2.5,
+            2.5,
+            2.5,
+            5,
+            0.2,
+            0.2,
+            2.5,
+            2.5,
+            2.5,
+            5,
+            0.2,
+            0.2,
+            10,
+            10,
+            10,
+            1.5,
+            1,
+            0.2,
+            1,
+            0.05,
+            0.05,
+            0.05,
+            1.5,
+            1,
+            0.2,
+            1,
+            0.05,
+            0.05,
+            0.05,
+        ]
+    )
+
+    # mocap
+    mocap_offset: np.ndarray = np.array([0.0, 0.0, 0.065])
+
+    # controller
+    xml_path_ctrl: str = (
+        "/home/pcy/Research/code/mujoco_mpc-fork/mjpc/tasks/g1/stand/task.xml"
+    )
+    num_opt_steps: int = 1
+    task_id: str = "G1 Stand"
+
+    # sim
+    xml_path_sim: str = (
+        "./model/g1.xml"
+    )
+    dt_sim: float = 0.005
+    real_time_factor: float = 1.0
+    auto_reset: bool = True

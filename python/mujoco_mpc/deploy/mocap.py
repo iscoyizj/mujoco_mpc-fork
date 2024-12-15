@@ -153,13 +153,6 @@ class ViconDemo:
                 struct_format = "q13d"
                 struct.pack_into(struct_format, self.state_buffer, 0, *data_to_pack)
 
-                # Optionally, print or process the filtered data
-                # print(f"Position: {position}")
-                # print(f"Filtered Linear Velocity: {filtered_linear_velocity}")
-                # print(f"Filtered Angular Velocity: {filtered_angular_velocity}")
-                print(f"Quat: {quaternion}")
-                print("-" * 50)
-
                 # Sleep to mimic sampling rate
                 time.sleep(1.0 / self.fs)
 
