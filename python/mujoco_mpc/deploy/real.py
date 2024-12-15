@@ -117,6 +117,9 @@ class Real:
         for i in range(self.config.nq_real):
             self.q[7 + i] = msg.motor_state[i].q
             self.qd[6 + i] = msg.motor_state[i].dq
+        if not self.config.use_mocap_ang_vel:
+            omega = np.array([msg.imu_state.gyroscope]).flatten()
+            self.qd[6:9] = omega
 
     def main_loop(self):
         t0 = time.time()
@@ -132,7 +135,10 @@ class Real:
                     # Read mocap state from shared memory
                     _, q_mocap, qd_mocap = unpack_mocap_data(self.mocap_buffer)
                     self.q[:7] = q_mocap[:7]
-                    self.qd[:6] = qd_mocap[:6]
+                    if self.config.use_mocap_ang_vel:
+                        self.qd[:6] = qd_mocap[:6]
+                    else:
+                        self.qd[:3] = qd_mocap[:3]
 
                     # Publish control via Unitree SDK2
                     for idx in range(self.config.nu_real):

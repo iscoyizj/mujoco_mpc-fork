@@ -84,6 +84,7 @@ class G1Config:
 
     # mocap
     mocap_offset: np.ndarray = np.array([0.0, 0.0, 0.065])
+    use_mocap_ang_vel: bool = False
 
     # controller
     xml_path_ctrl: str = (

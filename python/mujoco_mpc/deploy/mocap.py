@@ -6,6 +6,7 @@ from multiprocessing import shared_memory
 from pyvicon_datastream import tools
 import struct
 
+from utils import pack_mocap_data
 
 class ViconDemo:
     def __init__(self):
@@ -142,16 +143,7 @@ class ViconDemo:
                 )
 
                 # Prepare data to pack
-                utime = int(current_time * 1e6)  # int64
-                data_to_pack = [utime]
-                data_to_pack.extend(position.tolist())
-                data_to_pack.extend(quaternion.tolist())
-                data_to_pack.extend(filtered_linear_velocity.tolist())
-                data_to_pack.extend(filtered_angular_velocity.tolist())
-
-                # Pack data into shared memory buffer
-                struct_format = "q13d"
-                struct.pack_into(struct_format, self.state_buffer, 0, *data_to_pack)
+                self.state_buffer[:] = pack_mocap_data(self.state_buffer, current_time, position, quaternion, filtered_linear_velocity, filtered_angular_velocity)
 
                 # Sleep to mimic sampling rate
                 time.sleep(1.0 / self.fs)
