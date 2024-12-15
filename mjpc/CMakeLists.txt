@@ -62,6 +62,8 @@ add_library(
   tasks/g1/tracking/tracking.h
   tasks/g1/stand/stand.cc
   tasks/g1/stand/stand.h
+  tasks/go2/go2.cc
+  tasks/go2/go2.h
   tasks/humanoid/walk/walk.cc
   tasks/humanoid/walk/walk.h
   tasks/manipulation/common.cc

@@ -3,7 +3,7 @@
 
     <default>
         <motor ctrlrange="-1 1" ctrllimited="true"/>
-        <joint damping="0.3" armature="0.1" />
+        <joint damping="0.05" armature="0.1" frictionloss="0.2"/>
         <default class="hip_motor">
             <position kp="100" kv="2.5" />
         </default>

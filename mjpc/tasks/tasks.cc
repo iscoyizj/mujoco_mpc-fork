@@ -43,6 +43,7 @@
 
 #include "mjpc/tasks/g1/tracking/tracking.h"
 #include "mjpc/tasks/g1/stand/stand.h"
+#include "mjpc/tasks/go2/go2.h"
 
 namespace mjpc {
 
@@ -62,6 +63,8 @@ std::vector<std::shared_ptr<Task>> GetTasks() {
       std::make_shared<manipulation::Bring>(),
       std::make_shared<g1::Tracking>(),
       std::make_shared<g1::Stand>(),
+      std::make_shared<Go2Flat>(),
+      std::make_shared<Go2Hill>(),
       // DEEPMIND INTERNAL TASKS
       std::make_shared<OP3>(),
       std::make_shared<Panda>(),
