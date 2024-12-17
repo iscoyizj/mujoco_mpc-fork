@@ -13,7 +13,7 @@ from multiprocessing import shared_memory
 import struct
 from loop_rate_limiters import RateLimiter
 
-from config import G1Config, Go2Config
+from config import G1Config, Go2Config, QuadrupedConfig
 from utils import pack_state_data, unpack_control_data
 
 plt.style.use(["science"])
@@ -25,6 +25,8 @@ class Sim:
             self.config = G1Config()
         elif robot_name == "go2":
             self.config = Go2Config()
+        elif robot_name == "quadruped":
+            self.config = QuadrupedConfig()
         else:
             raise ValueError(f"Robot {robot_name} not supported")
 
@@ -74,7 +76,7 @@ class Sim:
 
                     # Get the state from the MuJoCo model
                     self.state_buffer[:] = pack_state_data(self.state_buffer, self.mj_data.time, self.mj_data.qpos, self.mj_data.qvel)
-                    
+
                     # Check if robot failed, if so, reset the simulation
                     if self.config.auto_reset:
                       vec_tar = np.array([0.0, 0.0, 1.0])
@@ -98,5 +100,5 @@ class Sim:
 
 
 if __name__ == "__main__":
-    sim = Sim(robot_name="go2")
+    sim = Sim(robot_name="g1")
     sim.main_loop()

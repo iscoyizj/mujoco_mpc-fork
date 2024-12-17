@@ -122,7 +122,7 @@ class Real:
 
     def main_loop(self):
         t0 = time.time()
-        rate_limiter = RateLimiter(frequency=1 / self.config.dt_real)
+        rate_limiter = RateLimiter(frequency=1 / self.config.ctrl_dt)
         try:
             with mujoco.viewer.launch_passive(
                 self.mj_model, self.mj_data, show_left_ui=True, show_right_ui=False
