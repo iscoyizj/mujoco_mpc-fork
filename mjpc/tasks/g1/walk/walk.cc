@@ -7,11 +7,11 @@
 #include "mjpc/task.h"
 #include "mjpc/utilities.h"
 
-namespace mjpc::humanoid {
+namespace mjpc::g1 {
 std::string Walk::XmlPath() const {
-  return GetModelPath("humanoid/walk/task.xml");
+  return GetModelPath("g1/walk/task.xml");
 }
-std::string Walk::Name() const { return "Humanoid Walk"; }
+std::string Walk::Name() const { return "G1 Walk"; }
 
 // ------------------ Residuals for humanoid walk task ------------
 //   Number of residuals:
@@ -165,4 +165,4 @@ void Walk::ResidualFn::Residual(const mjModel* model, const mjData* data,
   }
 }
 
-}  // namespace mjpc::humanoid
+}  // namespace mjpc::g1

@@ -117,10 +117,10 @@ class Go2Config:
     dt_real: float = 0.005
     locked_joint_idx: np.ndarray = np.zeros(0)
     kp_real: np.ndarray = np.array(
-        [30.0] * 12
+        [60.0] * 12
     )
     kd_real: np.ndarray = np.array(
-        [0.65] * 12
+        [3.0] * 12
     )
 
     # mocap
@@ -143,7 +143,7 @@ class Go2Config:
     )
     dt_sim: float = 0.005
     real_time_factor: float = 1.0
-    auto_reset: bool = True
+    auto_reset: bool = False
 
 class QuadrupedConfig(Go2Config):
     dt_ctrl: float = 0.005

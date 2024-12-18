@@ -111,7 +111,7 @@ namespace mjpc
       constexpr static double kHeightQuadruped = 0.27; // meter
 
       // target torso height over feet when bipedal
-      constexpr static double kHeightBiped = 0.6; // meter
+      constexpr static double kHeightBiped = 0.55; // meter
 
       // radius of foot geoms
       constexpr static double kFootRadius = 0.02; // meter

@@ -5,8 +5,8 @@
         <default class="go2">
             <geom friction="0.6" margin="0.001" condim="1" />
             <!-- <joint axis="0 1 0" damping="2" armature="0.01" /> -->
-            <joint axis="0 1 0" damping="0" armature="0.01" />
-            <position forcelimited="true" forcerange="-23.7 23.7" kp="30" kv="0.65" />
+            <joint axis="0 1 0" damping="3.0" armature="0.01" />
+            <position forcelimited="true" forcerange="-23.7 23.7" kp="60" kv="0.0" />
             <!-- <position forcelimited="true" forcerange="-23.7 23.7" kp="100" kv="2.0"
                 inheritrange="0.0" /> -->
             <default class="abduction">
@@ -89,7 +89,7 @@
             <!-- <geom size="0.047" pos="0.293 0 -0.06" class="collision"/> -->
             <site name="imu" pos="-0.02557 0 0.04232" />
             <site name="torso"/>
-            <site name="head" pos=".3 0 0"/>
+            <site name="head" pos=".3 0 0" size="0.02" group="5"/>
             <body name="FR_hip" pos="0.1934 -0.0465 0">
                 <inertial pos="-0.0054 -0.00194 -0.000105"
                     quat="0.498237 0.505462 0.499245 0.497014" mass="0.678"

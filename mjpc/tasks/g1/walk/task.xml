@@ -1,8 +1,7 @@
 <mujoco model="G1 Locomotion">
-  <include file="../../common.xml"/>
-  <!-- modified from: https://github.com/google-deepmind/dm_control/blob/main/dm_control/suite/humanoid.xml -->
+  <include file="../../common.xml" />
   <include file="../g1.xml" />
-  <size memory="400K"/>
+  <size memory="400K" />
   <custom>
     <!-- agent -->
     <numeric name="agent_planner" data="2" />
@@ -11,8 +10,8 @@
     <numeric name="sampling_spline_points" data="3" />
     <numeric name="sampling_exploration" data="0.05" />
     <numeric name="gradient_spline_points" data="5" />
-    <numeric name="residual_Torso" data="1.35 1.0 1.7" />
-    <numeric name="residual_Speed" data="0.5 -3.0 3.0" />
+    <numeric name="residual_Torso" data="0.95 0.9 1.0" />
+    <numeric name="residual_Speed" data="0.0 -1.5 1.5" />
 
     <!-- estimator -->
     <numeric name="estimator" data="0" />
@@ -40,49 +39,116 @@
     <framepos name="left_foot" objtype="site" objname="foot_left" />
     <framepos name="right_hand" objtype="site" objname="tracking[rhand]" />
     <framepos name="left_hand" objtype="site" objname="tracking[lhand]" />
-    <jointpos name="abdomen_z" joint="abdomen_z"/>
-    <jointpos name="abdomen_y" joint="abdomen_y"/>
-    <jointpos name="abdomen_x" joint="abdomen_x"/>
-    <jointpos name="hip_x_right" joint="hip_x_right"/>
-    <jointpos name="hip_z_right" joint="hip_z_right"/>
-    <jointpos name="hip_y_right" joint="hip_y_right"/>
-    <jointpos name="knee_right" joint="knee_right"/>
-    <jointpos name="ankle_y_right" joint="ankle_y_right"/>
-    <jointpos name="ankle_x_right" joint="ankle_x_right"/>
-    <jointpos name="hip_x_left" joint="hip_x_left"/>
-    <jointpos name="hip_z_left" joint="hip_z_left"/>
-    <jointpos name="hip_y_left" joint="hip_y_left"/>
-    <jointpos name="knee_left" joint="knee_left"/>
-    <jointpos name="ankle_y_left" joint="ankle_y_left"/>
-    <jointpos name="ankle_x_left" joint="ankle_x_left"/>
-    <jointpos name="shoulder1_right" joint="shoulder1_right"/>
-    <jointpos name="shoulder2_right" joint="shoulder2_right"/>
-    <jointpos name="elbow_right" joint="elbow_right"/>
-    <jointpos name="shoulder1_left" joint="shoulder1_left"/>
-    <jointpos name="shoulder2_left" joint="shoulder2_left"/>
-    <jointpos name="elbow_left" joint="elbow_left" />
+    <jointpos name="abdomen_z" joint="waist_yaw_joint" />
+    <jointpos name="abdomen_y" joint="waist_pitch_joint" />
+    <jointpos name="abdomen_x" joint="waist_roll_joint" />
+    <jointpos name="hip_x_right" joint="right_hip_roll_joint" />
+    <jointpos name="hip_z_right" joint="right_hip_yaw_joint" />
+    <jointpos name="hip_y_right" joint="right_hip_pitch_joint" />
+    <jointpos name="knee_right" joint="right_knee_joint" />
+    <jointpos name="ankle_y_right" joint="right_ankle_pitch_joint" />
+    <jointpos name="ankle_x_right" joint="right_ankle_roll_joint" />
+    <jointpos name="hip_x_left" joint="left_hip_roll_joint" />
+    <jointpos name="hip_z_left" joint="left_hip_yaw_joint" />
+    <jointpos name="hip_y_left" joint="left_hip_pitch_joint" />
+    <jointpos name="knee_left" joint="left_knee_joint" />
+    <jointpos name="ankle_y_left" joint="left_ankle_pitch_joint" />
+    <jointpos name="ankle_x_left" joint="left_ankle_roll_joint" />
+    <jointpos name="shoulder1_right" joint="right_shoulder_pitch_joint" />
+    <jointpos name="shoulder2_right" joint="right_shoulder_roll_joint" />
+    <jointpos name="elbow_right" joint="right_elbow_joint" />
+    <jointpos name="shoulder1_left" joint="left_shoulder_pitch_joint" />
+    <jointpos name="shoulder2_left" joint="left_shoulder_roll_joint" />
+    <jointpos name="elbow_left" joint="left_elbow_joint" />
 
     <!-- trace -->
-    <framepos name="trace0" objtype="body" objname="torso"/>
+    <framepos name="trace0" objtype="body" objname="torso" />
 
     <!-- residual -->
-    <framepos name="torso_position" objtype="body" objname="torso"/>
-    <subtreecom name="torso_subcom" body="torso"/>
-    <subtreelinvel name="torso_subcomvel" body="torso"/>
-    <framepos name="foot_right" objtype="body" objname="foot_right"/>
-    <framepos name="foot_left" objtype="body" objname="foot_left"/>
-    <framepos name="pelvis_position" objtype="body" objname="pelvis"/>
-    <framezaxis name="torso_up" objtype="xbody" objname="torso"/>
-    <framezaxis name="pelvis_up" objtype="xbody" objname="pelvis"/>
-    <framezaxis name="foot_right_up" objtype="xbody" objname="foot_right"/>
-    <framezaxis name="foot_left_up" objtype="xbody" objname="foot_left"/>
-    <framexaxis name="torso_forward" objtype="xbody" objname="torso"/>
-    <framexaxis name="pelvis_forward" objtype="xbody" objname="pelvis"/>
-    <framexaxis name="foot_right_forward" objtype="xbody" objname="foot_right"/>
-    <framexaxis name="foot_left_forward" objtype="xbody" objname="foot_left"/>
-    <subtreelinvel name="waist_lower_subcomvel" body="waist_lower"/>
-    <framelinvel name="torso_velocity" objtype="body" objname="torso"/>
-    <framelinvel name="foot_right_velocity" objtype="body" objname="foot_right"/>
-    <framelinvel name="foot_left_velocity" objtype="body" objname="foot_left"/>
+    <framepos name="torso_position" objtype="body" objname="torso" />
+    <subtreecom name="torso_subcom" body="torso" />
+    <subtreelinvel name="torso_subcomvel" body="torso" />
+    <framepos name="foot_right" objtype="body" objname="right_ankle_roll_link" />
+    <framepos name="foot_left" objtype="body" objname="left_ankle_roll_link" />
+    <framepos name="pelvis_position" objtype="body" objname="pelvis" />
+    <framezaxis name="torso_up" objtype="xbody" objname="torso" />
+    <framezaxis name="pelvis_up" objtype="xbody" objname="pelvis" />
+    <framezaxis name="foot_right_up" objtype="xbody" objname="right_ankle_roll_link" />
+    <framezaxis name="foot_left_up" objtype="xbody" objname="left_ankle_roll_link" />
+    <framexaxis name="torso_forward" objtype="xbody" objname="torso" />
+    <framexaxis name="pelvis_forward" objtype="xbody" objname="pelvis" />
+    <framexaxis name="foot_right_forward" objtype="xbody" objname="right_ankle_roll_link" />
+    <framexaxis name="foot_left_forward" objtype="xbody" objname="left_ankle_roll_link" />
+    <subtreelinvel name="waist_lower_subcomvel" body="waist_yaw_link" />
+    <framelinvel name="torso_velocity" objtype="body" objname="torso" />
+    <framelinvel name="foot_right_velocity" objtype="body" objname="right_ankle_roll_link" />
+    <framelinvel name="foot_left_velocity" objtype="body" objname="left_ankle_roll_link" />
   </sensor>
+
+  <actuator>
+    <!-- <motor name="left_hip_pitch_joint" joint="left_hip_pitch_joint" gear="80" />
+        <motor name="left_hip_roll_joint" joint="left_hip_roll_joint" gear="80" />
+        <motor name="left_hip_yaw_joint" joint="left_hip_yaw_joint" gear="80" />
+        <motor name="left_knee_joint" joint="left_knee_joint" gear="100" />
+        <motor name="left_ankle_pitch_joint" joint="left_ankle_pitch_joint" gear="50" />
+        <motor name="left_ankle_roll_joint" joint="left_ankle_roll_joint" gear="50" />
+
+        <motor name="right_hip_pitch_joint" joint="right_hip_pitch_joint" gear="80" />
+        <motor name="right_hip_roll_joint" joint="right_hip_roll_joint" gear="80" />
+        <motor name="right_hip_yaw_joint" joint="right_hip_yaw_joint" gear="80" />
+        <motor name="right_knee_joint" joint="right_knee_joint" gear="100" />
+        <motor name="right_ankle_pitch_joint" joint="right_ankle_pitch_joint" gear="50" />
+        <motor name="right_ankle_roll_joint" joint="right_ankle_roll_joint" gear="50" />
+
+        <motor name="waist_yaw_joint" joint="waist_yaw_joint" gear="80" />
+        <motor name="waist_roll_joint" joint="waist_roll_joint" gear="50" />
+        <motor name="waist_pitch_joint" joint="waist_pitch_joint" gear="50" />
+
+        <motor name="left_shoulder_pitch_joint" joint="left_shoulder_pitch_joint" gear="20" />
+        <motor name="left_shoulder_roll_joint" joint="left_shoulder_roll_joint" gear="20" />
+        <motor name="left_elbow_joint" joint="left_elbow_joint" gear="20" />
+        <motor name="right_shoulder_pitch_joint" joint="right_shoulder_pitch_joint" gear="20" />
+        <motor name="right_shoulder_roll_joint" joint="right_shoulder_roll_joint" gear="20" />
+        <motor name="right_elbow_joint" joint="right_elbow_joint" gear="20" /> -->
+
+    <position class="hip_motor" name="left_hip_pitch_joint" joint="left_hip_pitch_joint" />
+    <position class="hip_motor" name="left_hip_roll_joint" joint="left_hip_roll_joint" />
+    <position class="hip_motor" name="left_hip_yaw_joint" joint="left_hip_yaw_joint" />
+    <position class="knee_motor" name="left_knee_joint" joint="left_knee_joint" />
+    <position class="ankle_pitch_motor" name="left_ankle_pitch_joint" joint="left_ankle_pitch_joint" />
+    <position class="ankle_roll_motor" name="left_ankle_roll_joint" joint="left_ankle_roll_joint" />
+
+    <position class="hip_motor" name="right_hip_pitch_joint" joint="right_hip_pitch_joint" />
+    <position class="hip_motor" name="right_hip_roll_joint" joint="right_hip_roll_joint" />
+    <position class="hip_motor" name="right_hip_yaw_joint" joint="right_hip_yaw_joint" />
+    <position class="knee_motor" name="right_knee_joint" joint="right_knee_joint" />
+    <position class="ankle_pitch_motor" name="right_ankle_pitch_joint"
+      joint="right_ankle_pitch_joint" />
+    <position class="ankle_roll_motor" name="right_ankle_roll_joint" joint="right_ankle_roll_joint" />
+
+    <position class="waist_motor" name="waist_yaw_joint" joint="waist_yaw_joint" />
+    <position class="waist_motor" name="waist_roll_joint" joint="waist_roll_joint" />
+    <position class="waist_motor" name="waist_pitch_joint" joint="waist_pitch_joint" />
+
+    <position class="shoulder_pitch_motor" name="left_shoulder_pitch_joint"
+      joint="left_shoulder_pitch_joint" />
+    <position class="shoulder_roll_motor" name="left_shoulder_roll_joint"
+      joint="left_shoulder_roll_joint" />
+    <position class="elbow_motor" name="left_elbow_joint" joint="left_elbow_joint" />
+    <position class="shoulder_pitch_motor" name="right_shoulder_pitch_joint"
+      joint="right_shoulder_pitch_joint" />
+    <position class="shoulder_roll_motor" name="right_shoulder_roll_joint"
+      joint="right_shoulder_roll_joint" />
+    <position class="elbow_motor" name="right_elbow_joint" joint="right_elbow_joint" />
+
+
+    <!-- <motor name="left_shoulder_yaw_joint" joint="left_shoulder_yaw_joint" /> -->
+    <!-- <motor name="left_wrist_roll_joint" joint="left_wrist_roll_joint" />
+        <motor name="left_wrist_pitch_joint" joint="left_wrist_pitch_joint" />
+        <motor name="left_wrist_yaw_joint" joint="left_wrist_yaw_joint" /> -->
+    <!-- <motor name="right_shoulder_yaw_joint" joint="right_shoulder_yaw_joint" /> -->
+    <!-- <motor name="right_wrist_roll_joint" joint="right_wrist_roll_joint" />
+        <motor name="right_wrist_pitch_joint" joint="right_wrist_pitch_joint" />
+        <motor name="right_wrist_yaw_joint" joint="right_wrist_yaw_joint" /> -->
+  </actuator>
 </mujoco>
