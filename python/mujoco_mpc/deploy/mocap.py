@@ -8,7 +8,7 @@ import struct
 from loop_rate_limiters import RateLimiter
 
 from utils import pack_mocap_data
-from config import G1Config
+from config import G1Config, Go2Config
 class ViconDemo:
     """
     Vicon data acquisition and filtering
@@ -20,6 +20,8 @@ class ViconDemo:
     def __init__(self, robot_name="g1"):
         if robot_name == "g1":
             self.config = G1Config()
+        if robot_name == "go2":
+            self.config = Go2Config()
         else:
             raise ValueError(f"Robot {robot_name} not supported")
 
@@ -66,16 +68,21 @@ class ViconDemo:
     def get_vicon_data(self):
         position = self.tracker.get_position(self.vicon_object_name)
         if not position:
+            
             print(f"Cannot get the pose of `{self.vicon_object_name}`.")
             return None, None, None
 
         try:
+
             obj = position[2][0]
             _, _, x, y, z, roll, pitch, yaw = obj
             current_time = time.time()
-
+          
             # Position and orientation
             position = np.array([x, y, z]) / 1000.0
+            position = position + self.config.mocap_offset
+
+            # position = position + self.config.mocap_offset
             rotation = R.from_euler("XYZ", [roll, pitch, yaw], degrees=False)
             quaternion = rotation.as_quat()  # [x, y, z, w]
 
@@ -158,8 +165,9 @@ class ViconDemo:
 
                 # Prepare data to pack
                 x, y, z, w = quaternion
-                self.state_buffer[:] = pack_mocap_data(self.state_buffer, current_time, position, np.array([w, x, y, z]), filtered_linear_velocity, filtered_angular_velocity)
-
+                q = np.concatenate([position,np.array([w, x, y, z])])
+                qd = np.concatenate([filtered_linear_velocity, filtered_angular_velocity])
+                self.state_buffer[:] = pack_mocap_data(self.state_buffer, current_time, q, qd)
                 # Sleep to mimic sampling rate
                 rate_limiter.sleep()
 
@@ -175,5 +183,5 @@ class ViconDemo:
 
 
 if __name__ == "__main__":
-    vicon_demo = ViconDemo()
+    vicon_demo = ViconDemo("go2")
     vicon_demo.main_loop()

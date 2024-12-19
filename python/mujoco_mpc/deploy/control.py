@@ -72,11 +72,15 @@ class Controller:
 
     def main_loop(self):
         # Controller
+        print(self.config.xml_path_ctrl)
         model = mujoco.MjModel.from_xml_path(self.config.xml_path_ctrl)
+        # print model information
+        
         rate_limiter = RateLimiter(frequency=1 / self.config.dt_ctrl)
         try:
             if self.mujoco_mpc_mode == "headless":
                 agent = agent_lib.Agent(task_id=self.config.task_id, model=model)
+
                 while True:
                     q_sim, qd_sim, t_real = self.get_state()
                     # NOTE: t_real is not used here
@@ -96,8 +100,17 @@ class Controller:
                     task_id=self.config.task_id,
                     model=model,
                 ) as agent:
+                    # Debugging Agent Information
+                    # print("Debugging Agent Information:")
+                    # print(f"Agent qpos size expected: {agent.model.nq}")  # Expected size of qpos
+                    # print(f"Agent qvel size expected: {agent.model.nv}")  # Expected size of qvel
+
                     while True:
                         q_sim, qd_sim, t_real = self.get_state()
+                        # print(f"Agent current qpos: {q_sim.shape}")  # qpos being set
+                        # print(f"Agent current qvel: {qd_sim.shape}")  # qvel being set
+                        # print q_sim size
+                        # print(q_sim.shape)
                         agent.set_state(qpos=q_sim, qvel=qd_sim)
                         ctrl = agent.get_action()
                         ctrl_real = ctrl_sim2real(
@@ -106,7 +119,7 @@ class Controller:
                         self.ctrl_buffer[:] = pack_control_data(
                             self.ctrl_buffer, t_real, ctrl_real
                         )
-                        rate_limiter.sleep()
+                        # rate_limiter.sleep()
 
         except KeyboardInterrupt:
             print("Keyboard interrupt detected. Exiting...")
