@@ -46,11 +46,20 @@ namespace mjpc
     // feedback scale
     feedback_scale = GetNumberOrDefault(1.0, model, "sampling_scale");
 
-  // spline points
+    // spline points
     num_spline_points = GetNumberOrDefault(kMaxTrajectoryHorizon, model,
                                            "sampling_spline_points");
     interpolation_ = GetNumberOrDefault(mjpc::spline::SplineInterpolation::kCubicSpline, model,
                                         "sampling_representation");
+
+    // number of sampling update before feedback is applied
+    num_sampling_update_before_feedback = GetNumberOrDefault(3, model, "sampling_update_before_feedback");
+
+    // cost variance threshold
+    cost_variance_threshold_ = GetNumberOrDefault(100.0, model, "sampling_cost_variance_threshold");
+
+    // feedback scale gain
+    k_feedback_scale_gain = GetNumberOrDefault(1.0, model, "sampling_feedback_scale_gain");
 
     winner = 0;
 
@@ -103,11 +112,15 @@ namespace mjpc
       trajectory[i].Reset(horizon, initial_repeated_action);
     }
 
-    improvement = 0.0;
+    sampling_improvement = 0.0;
+    ilqr_improvement = 0.0;
     winner = 0;
 
     // Reset ilqg_solver
     ilqg_solver.Reset(horizon, initial_repeated_action);
+
+    // reset update count
+    update_cnt = 0;
   }
 
   // set state
@@ -124,22 +137,33 @@ namespace mjpc
   void FeedbackSamplingPlanner::UpdateNominalPolicy(int horizon, ThreadPool &pool)
   {
     // Run iLQG optimization to get a new nominal policy
+    // update every num_sampling_update_before_feedback updates
     ilqg_solver.OptimizePolicy(horizon, pool);
+    ilqr_improvement = ilqg_solver.improvement;
 
-    // Copy iLQG solution to this->policy
+    // Copy iLQG when its cost variance is less than the threshold
+    if (ilqg_solver.cost_variance < cost_variance_threshold_)
     {
       const std::unique_lock<std::shared_mutex> lock(mtx_);
       policy.CopyFrom(ilqg_solver.policy, ilqg_solver.policy.trajectory.horizon);
       // Ensure the main policy uses full feedback
       policy.feedback_scaling = 1.0;
     }
+    else
+    {
+      policy.feedback_scaling = 0.0;
+    }
+
   }
 
   // optimize nominal policy using feedback-based sampling
   void FeedbackSamplingPlanner::OptimizePolicy(int horizon, ThreadPool &pool)
   {
-    // Update nominal policy from iLQG
-    UpdateNominalPolicy(horizon, pool);
+    // Update nominal policy from iLQG, update ilgr in a lower frequency since it is 
+    if (update_cnt % num_sampling_update_before_feedback == 0)
+    {
+      UpdateNominalPolicy(horizon, pool);
+    }
 
     // Optimize candidates
     OptimizePolicyCandidates(1, horizon, pool);
@@ -148,10 +172,16 @@ namespace mjpc
     auto policy_update_start = std::chrono::steady_clock::now();
     CopyCandidateToPolicy(0);
 
-    double best_return = trajectory[winner].total_return;
-    improvement = mju_max(best_return - trajectory[winner].total_return, 0.0);
+    double best_return = trajectory[0].total_return;
+    sampling_improvement = mju_max(best_return - trajectory[winner].total_return, 0.0);
 
     policy_update_compute_time = GetDuration(policy_update_start);
+
+    // update feedback scaling which is exp(-sampling_improvement * k_feedback_scale_gain)
+    feedback_scale = exp(-sampling_improvement * k_feedback_scale_gain);
+
+    // increment update count
+    update_cnt++;
   }
 
   // compute trajectory using nominal policy
@@ -387,7 +417,10 @@ namespace mjpc
         // Add a GUI element to control feedback_scale if desired
         {mjITEM_SLIDERNUM, "Feedback Scale", 2, &feedback_scale, "0 1"},
         {mjITEM_SLIDERINT, "Spline Points", 2, &num_spline_points, "1 10"},
-        {mjITEM_SLIDERINT, "Representation", 2, &interpolation_, "0 2"},
+        {mjITEM_SELECT, "Spline", 2, &interpolation_, "Zero\nLinear\nCubic"},
+        {mjITEM_SLIDERINT, "Sampling Update Before Feedback", 10, &num_sampling_update_before_feedback, "1 50"},
+        {mjITEM_SLIDERNUM, "Cost Variance Threshold", 2, &cost_variance_threshold_, "0 100"},
+        {mjITEM_SLIDERNUM, "Feedback Scale Gain", 1, &k_feedback_scale_gain, "0.1 10"},
         {mjITEM_END}};
 
     mjui_add(&ui, defFeedbackSampling);
@@ -402,9 +435,18 @@ namespace mjpc
     // improvement plot
     PlotUpdateData(fig_planner, planner_bounds,
                    fig_planner->linedata[0 + planner_shift][0] + 1,
-                   mju_log10(mju_max(improvement, 1.0e-6)),
+                   mju_log10(mju_max(sampling_improvement, 1.0e-6)),
                    100, 0 + planner_shift, 0, 1, -100);
-    mju::strcpy_arr(fig_planner->linename[0 + planner_shift], "Improvement");
+    mju::strcpy_arr(fig_planner->linename[0 + planner_shift], "Sampling Improvement");
+
+    // ilqr improvement plot
+    PlotUpdateData(fig_planner, planner_bounds,
+                   fig_planner->linedata[1 + planner_shift][0] + 1,
+                   mju_log10(mju_max(ilqr_improvement, 1.0e-6)),
+                   //  ilqr_improvement,
+                   100, 1 + planner_shift, 0, 1, -100);
+    mju::strcpy_arr(fig_planner->linename[1 + planner_shift], "iLQG Improvement");
+
     fig_planner->range[1][0] = planner_bounds[0];
     fig_planner->range[1][1] = planner_bounds[1];
 

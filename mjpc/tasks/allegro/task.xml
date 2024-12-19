@@ -18,6 +18,7 @@
     <numeric name="robust_xfrc" data="0.004" />
     <numeric name="gradient_spline_points" data="6" />
     <numeric name="sampling_feedback_scale" data="1.0" />
+    <numeric name="sampling_cost_variance_threshold" data="3.0" />
 
     <!-- cem -->
     <numeric name="n_elite" data="10" />

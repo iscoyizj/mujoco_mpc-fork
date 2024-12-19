@@ -15,6 +15,9 @@
     <numeric name="n_elite" data="8" />
     <numeric name="explore_fraction" data="0.5" />
 
+    <numeric name="cost_variance_threshold" data="1.0" />
+    <numeric name="sampling_update_before_feedback" data="20" />
+
     <numeric name="robust_xfrc" data="0.004" />
   </custom>
 

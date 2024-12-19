@@ -137,7 +137,7 @@ void iLQGPlanner::Reset(int horizon, const double* initial_repeated_action) {
   improvement = 0.0;
   expected = 0.0;
   surprise = 0.0;
-
+  cost_variance = 0.0;
   // derivative skip
   derivative_skip_ = GetNumberOrDefault(0, model, "derivative_skip");
 }
@@ -565,6 +565,16 @@ void iLQGPlanner::Iteration(int horizon, ThreadPool& pool) {
              1.0e-16;
   improvement = previous_return - trajectory[winner].total_return;
   surprise = mju_min(mju_max(0, improvement / expected), 2);
+  // calculate the variance of total return
+  double total_return_sum = 0.0;
+  for (int i = 0; i < num_trajectory_; i++) {
+    total_return_sum += trajectory[i].total_return;
+  }
+  double total_return_mean = total_return_sum / num_trajectory_;
+  for (int i = 0; i < num_trajectory_; i++) {
+    cost_variance += (trajectory[i].total_return - total_return_mean) * (trajectory[i].total_return - total_return_mean);
+  }
+  cost_variance = cost_variance / num_trajectory_;
 
   // update regularization
   backward_pass.UpdateRegularization(settings.min_regularization,

@@ -142,7 +142,7 @@ class iLQGPlanner : public Planner {
   double improvement;
   double expected;
   double surprise;
-
+  double cost_variance;
   // compute time
   double nominal_compute_time;
   double model_derivative_compute_time;

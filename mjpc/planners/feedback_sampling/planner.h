@@ -110,13 +110,18 @@ namespace mjpc
     double noise_exploration[2] = {0.1, 0.0};
 
     int winner = -1;
-    double improvement = 0.0;
+    double sampling_improvement = 0.0;
+    double ilqr_improvement = 0.0;
 
     // number of trajectories
     int num_trajectory_ = 10;
 
     // controller feedback scale
     double feedback_scale = 1.0;
+
+    // number of sampling update before feedback is applied
+    int num_sampling_update_before_feedback = 3;
+    int update_cnt = 0;
 
     // spline
     int num_spline_points = 10;
@@ -127,6 +132,12 @@ namespace mjpc
     double noise_compute_time = 0.0;
     double rollouts_compute_time = 0.0;
     double policy_update_compute_time = 0.0;
+
+    // cost variance threshold
+    double cost_variance_threshold_ = 10.0;
+
+    // feedback scale gain
+    double k_feedback_scale_gain = 1.0;
 
     mutable std::shared_mutex mtx_;
   };
