@@ -19,6 +19,10 @@
     <numeric name="sampling_trajectories" data="10" />
     <numeric name="sampling_scale" data="1.0" />
     <numeric name="sampling_representation" data="2" />
+
+    <numeric name="sampling_update_before_feedback" data="10" />
+    <numeric name="sampling_cost_variance_threshold" data="100.0" />
+    <numeric name="sampling_feedback_scale_gain" data="1.0" />
   </custom>
 
   <sensor>
